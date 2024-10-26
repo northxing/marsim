@@ -10,7 +10,7 @@ Read the Marsim1.1.pdf file for information and details on the simulator. The pd
 
 
 # Citation
-Xing, Y. (2024). yhxing/marsim. GitHub. https://github.com/yhxinguis/marsim 
+Xing, Y. (2024). northxing/marsim. GitHub. https://github.com/northxing/marsim 
 
 
 # Licensing
