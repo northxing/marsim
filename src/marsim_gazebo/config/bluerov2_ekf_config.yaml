@@ -9,7 +9,7 @@ ekf_filter_node:
     debug_out_file: /tmp/ekf_debug.txt
 
     # tf_prefix is defined in the robot localization node in the launch file
-    map_frame: map
+    map_frame: world
     odom_frame: odom
     base_link_frame: base_link
     world_frame: odom

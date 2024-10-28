@@ -35,6 +35,7 @@ def publish_thruster_commands(thruster_pubs, u):
     """
 
     for i, thrust in enumerate(u):
-        msg = Float64()
-        msg.data = float(np.clip(thrust, -5.0, 5.0))  # Clip thrust to -5 to +5 range
-        thruster_pubs[i].publish(msg)
+        if thrust is not None:
+            msg = Float64()
+            msg.data = float(np.clip(thrust, -5.0, 5.0))  # Clip thrust to -5 to +5 range
+            thruster_pubs[i].publish(msg)

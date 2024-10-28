@@ -1,12 +1,16 @@
-# ROS2/Gazebo Marine Simulator v1.1
+# ROS2-Gazebo Marine Simulator v1.2
 
-ROS2/Gazebo Marine Simulator (currently under development) aims to be a comprehensive marine simulation environment utilizing ROS2 (Robot Operating System 2) and Gazebo. 
+ROS2-Gazebo Marine Simulator (currently under development) aims to be a comprehensive marine simulation environment utilizing ROS2 (Robot Operating System 2) and Gazebo. 
+
+marsim currently consists of these packages:
+- bluerov2_ctrl_serv (planned action servers for BlueROV2 control)
+- marsim_control
+- marsim_gazebo
 
 
-# MARSIM1.1.pdf
+# MARSIM1.2.pdf
 
-Read the Marsim1.1.pdf file for information and details on the simulator. The pdf covers the fundamental components of the simulation stack, including Docker containerization, ROS2 architecture, and Gazebo simulation capabilities.
-
+Read the Marsim1.2.pdf file for information and details on the simulator. The pdf covers the fundamental components of the simulation stack, including Docker containerization, ROS2 architecture, and Gazebo simulation capabilities.
 
 
 # Citation
@@ -37,7 +41,7 @@ limitations under the License.
 
 # Third-Party Licenses
 
-Marine Simulator Gazebo (marsim_gazebo) package was extensively modified from and built on clydemcqueen/bluerov2_ignition, which is licensed under the MIT liense.
+The original Marine Simulator Gazebo (marsim_gazebo) package, especially the BlueROV2 part, was extensively modified from and built on clydemcqueen/bluerov2_ignition, which is licensed under the MIT liense.
 
 Copyright 2023 Clyde McQueen
 License: MIT
@@ -49,7 +53,7 @@ https://github.com/clydemcqueen/bluerov2_ignition/tree/main
 Contributions to this project are welcome. By submitting a contribution, you agree to license your work under the same Apache License 2.0.
 
 
-# Commands:
+# Example commands:
 
 Launch the empty world:
 ros2 launch marsim_gazebo empty_world.launch.py

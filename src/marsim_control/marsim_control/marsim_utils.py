@@ -1,3 +1,4 @@
+import rclpy
 import numpy as np
 from nav_msgs.msg import Odometry
 
@@ -40,6 +41,7 @@ def odom_callback(msg: Odometry):
         
 
 def quaternion_to_euler(q):
+
     """
     Converts quaternions to Euler angles (roll, pitch, yaw).
 
@@ -49,11 +51,12 @@ def quaternion_to_euler(q):
     Returns:
     numpy.array: Array of Euler angles (roll, pitch, yaw).
     """
+
     # Extract the values from Q
-    q0 = q[:, 0]
-    q1 = q[:, 1]
-    q2 = q[:, 2]
-    q3 = q[:, 3]
+    q0 = q[:, 3]
+    q1 = q[:, 0]
+    q2 = q[:, 1]
+    q3 = q[:, 2]
         
     # First row of the rotation matrix
     r00 = 2 * (q0 * q0 + q1 * q1) - 1
@@ -76,4 +79,5 @@ def quaternion_to_euler(q):
     yaw = np.arctan2(r10, r00)
         
     return np.column_stack((roll, pitch, yaw))
+
 

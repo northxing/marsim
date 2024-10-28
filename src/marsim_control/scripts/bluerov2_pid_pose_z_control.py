@@ -95,8 +95,7 @@ class PoseZControlNode(Node):
         # Create publishers for each thruster
         self.thruster_pubs = [
             self.create_publisher(Float64, f'/{self.model_name}/thruster{i}/cmd_thrust', 10)
-            for i in range(1, 7)
-        ]
+            for i in range(1, 7)]
         
         # Timer for the control loop
         self.timer = self.create_timer(0.1, self.control_loop)  # 10 Hz control loop
@@ -133,7 +132,7 @@ class PoseZControlNode(Node):
         # Create thruster commands
         # Assuming thrusters 5 and 6 (indices 4 and 5) are responsible for vertical motion
         # Positive thrust for T5 and T6 pushes the ROV down
-        thruster_commands = [0.0] * 6
+        thruster_commands = [None] * 6
         thruster_commands[4] = -output
         thruster_commands[5] = -output
         

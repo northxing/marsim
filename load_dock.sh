@@ -12,6 +12,6 @@ docker run \
 --env="QT_X11_NO_MITSHM=1" \
 --env="MESA_GL_VERSION_OVERRIDE=3.3" \
 --volume="/tmp/.X11-unix:/tmp/.X11-unix" \
---volume="/home/yhxing/Docker_WS/marsim1.1:/home/marsim_ws:rw" \
+--volume="/home/yhxing/Docker_WS/marsim1.2:/home/marsim_ws:rw" \
 --runtime=nvidia \
-marsim1.1_dock 
+marsim1.2_dock 
