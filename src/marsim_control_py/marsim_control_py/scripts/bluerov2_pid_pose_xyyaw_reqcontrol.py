@@ -61,8 +61,8 @@ from nav_msgs.msg import Odometry
 from std_msgs.msg import Float64
 import numpy as np
 import math
-from marsim_control.marsim_utils import odom_callback, quaternion_to_euler
-from marsim_control.bluerov2_utils import publish_thruster_commands
+from marsim_control_py.marsim_utils import odom_callback, quaternion_to_euler
+from marsim_control_py.bluerov2_utils import publish_thruster_commands
 
 class PoseXYYawControlNode(Node):
     def __init__(self):

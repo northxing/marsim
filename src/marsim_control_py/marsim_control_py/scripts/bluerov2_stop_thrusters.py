@@ -22,7 +22,7 @@ Note:
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float64
-from marsim_control.bluerov2_utils import publish_thruster_commands
+from marsim_control_py.bluerov2_utils import publish_thruster_commands
 
 class StopAllThrustersNode(Node):
     def __init__(self):
