@@ -1,8 +1,0 @@
-float64 target_z    # Requested displacement in Z
----
-float64 final_z     # Final Z position reached
-float64 error       # Final error in Z position
----
-float64 current_z   # Current Z position
-float64 error       # Current error
-float64 thrust      # Current thrust command
