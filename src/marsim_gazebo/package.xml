@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+    <name>marsim_gazebo</name>
+    <version>0.0.0</version>
+    <description>Marine Simulator Gazebo Package</description>
+    <maintainer email="yihan.xing@uis.no">Yihan Xing</maintainer>
+    <license>Apache 2.0</license>
+    <url type="website">TBA</url>
+    <url type="repository">TBA</url>
+    <url type="bugtracker">TBA</url>
+
+    <depend>gz-sim8</depend>
+    <depend>gz-plugin2</depend>
+    <depend>gz-common5</depend>
+    <depend>gz-transport13</depend>
+
+
+    <depend>urdf</depend>
+    <depend>xacro</depend>
+    <depend>rviz2</depend>
+    <depend>joint_state_publisher</depend>
+    <depend>robot_state_publisher</depend>
+
+    <depend>assimp</depend>
+
+    <depend>rclcpp</depend>
+    <depend>rclpy</depend>
+    <depend>std_msgs</depend>
+    <depend>geometry_msgs</depend>
+
+    <depend>visualization_msgs</depend>
+    <depend>tf2</depend>
+    <depend>tf2_ros</depend>
+
+    <exec_depend>ros2launch</exec_depend>
+
+    <export>
+        <build_type>ament_cmake</build_type>
+    </export>
+
+</package>

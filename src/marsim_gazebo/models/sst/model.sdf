@@ -1,0 +1,459 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<sdf version="1.6">
+
+<!--
+# SST (Subsea Shuttle Tanker) Model for Gazebo Simulation
+
+## Description
+This SDF file defines a model of an SST (Subsea Shuttle Tanker), a large underwater vehicle designed for transporting oil or gas from subsea production systems to surface facilities. The model includes physical properties, sensors, and actuators for realistic underwater tanker simulation in Gazebo.
+
+## Features
+- Accurate physical dimensions and inertial properties of a large subsea tanker
+- Main propeller and two auxiliary thrusters for propulsion and maneuvering
+- IMU sensor for orientation and acceleration
+- DVL (Doppler Velocity Log) sensor for velocity measurement
+- Hydrodynamics plugin for realistic underwater behavior
+- Thruster plugins for propulsion simulation
+
+## Technical Details
+- SDF version: 1.6
+- Model name: sst
+- Main body dimensions: 117.0 x 17.0 x 17.0 meters
+- Total mass: 33,619,000 kg
+
+## Components
+1. Base link (main tanker body)
+2. Main propeller
+3. Fore thruster
+4. Aft thruster
+
+## Sensors
+- IMU:
+  - Updates at 50Hz
+  - Includes noise models for linear acceleration and angular velocity
+- DVL:
+  - Updates at 50Hz
+  - Simulates both bottom tracking and water mass modes
+  - Mounted at (0, 0, -8.6) relative to the base link
+
+## Plugins
+1. JointStatePublisher: Publishes joint states
+2. PosePublisher: Publishes pose information
+3. OdometryPublisher: Publishes odometry data
+4. DVLRosConverter: Converts DVL data to ROS-compatible format
+5. Hydrodynamics: Simulates underwater forces and moments
+6. Thruster (x3): Simulates behavior for main propeller and two auxiliary thrusters
+
+## Hydrodynamics
+- Detailed hydrodynamic parameters including added mass and drag coefficients
+- Water density: 1025.0 kg/m³ (typical seawater density)
+
+## Thrusters
+- Main propeller: 7.0m diameter
+- Auxiliary thrusters: 2.0m diameter each
+- All thrusters use force control with a maximum thrust of 164 kN
+
+## Usage
+This model can be included in a Gazebo world file or spawned dynamically in a simulation. It is designed for underwater robotics research and development, particularly for large-scale subsea operations and tanker simulations.
+
+## File Structure
+- Mesh files: 
+  - Main body: sst_body.dae
+  - Propellers: t200_ccw_prop.dae (scaled appropriately)
+
+## Notes
+- Absolute file paths are used for mesh files to ensure compatibility with both Gazebo and RVIZ2
+- The collision geometry is simplified to a box for computational efficiency
+- Thruster properties and hydrodynamic coefficients may need fine-tuning based on specific simulation requirements
+- This model is particularly suitable for simulations involving subsea oil and gas operations, underwater transportation, and marine robotics interactions with large-scale vehicles
+
+## Reference
+PhD thesis by Yucong Ma performed at the University of Stavanger, Norway. 
+Ma, Y. (2023). Design and Dynamic Analysis of a Novel Subsea Shuttle Tanker.
+A copy of the PhD thesis can be found in the /references folder.
+-->
+
+  <model name="sst">
+    <pose>0 0 0 0 0 0</pose>
+
+    <plugin
+      filename="gz-sim-joint-state-publisher-system"
+      name="gz::sim::systems::JointStatePublisher">
+    </plugin>
+    
+    <plugin
+      filename="gz-sim-pose-publisher-system"
+      name="gz::sim::systems::PosePublisher">
+      <publish_link_pose>true</publish_link_pose>
+      <publish_sensor_pose>true</publish_sensor_pose>
+      <use_pose_vector_msg>true</use_pose_vector_msg>
+      <static_publisher>true</static_publisher>
+      <static_update_frequency>1</static_update_frequency>
+      <publish_nested_models>true</publish_nested_models>
+    </plugin>
+    
+    <plugin
+      filename="gz-sim-odometry-publisher-system"
+      name="gz::sim::systems::OdometryPublisher">
+      <odom_frame>world</odom_frame>
+      <robot_base_frame>sst</robot_base_frame>
+      <dimensions>3</dimensions>
+    </plugin>
+
+    <plugin filename="libDVLRosConverter.so" name="marsim_gazebo::DVLRosConverter">
+      <input_topic>/model/sst/dvl/velocity</input_topic>
+      <velocity_output_topic>/model/sst/dvl_ros_compatible/velocity</velocity_output_topic>
+      <range_output_topic>/model/sst/dvl_ros_compatible/range</range_output_topic>
+    </plugin> 
+
+    <link name="base_link">
+      <inertial>
+        <pose>-1.43 0.0 -0.78 0 0 0</pose>
+        <mass>33619000</mass> <!--total mass-->
+        <inertia>
+          <ixx>1214486400</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>79000000000</iyy>
+          <iyz>0</iyz>
+          <izz>79000000000</izz> <!--same as Iyy-->
+        </inertia>
+      </inertial>
+
+      <visual name="base_link_visual">
+        <geometry>
+          <mesh>
+            <!-- The absolute file path is used so that it can be loaded by both GZ and RVIZ2 -->
+            <uri>file:///home/marsim_ws/src/marsim_gazebo/models/sst/meshes/sst_body.dae</uri> 
+            <scale>1.0 1.0 1.0</scale>
+          </mesh>
+        </geometry>
+      </visual>
+
+      <!-- Collision volume * fluid_density == displaced mass, used by BuoyancyPlugin -->
+      <!-- It seems that only box geometry is water tight and will generate buoyancy force -->
+      <collision name="base_link_collision">
+        <pose>-1.43 0.0 0.0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>117.0 17.0 17.0</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <sensor name="imu_sensor" type="imu">
+        <always_on>1</always_on>
+        <update_rate>50</update_rate>
+        <visualize>true</visualize>
+        <topic>model/sst/imu</topic>
+        <imu>
+          <linear_acceleration>
+            <x>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>0.001</stddev>
+                <bias_mean>0.001</bias_mean>
+                <bias_stddev>0.0001</bias_stddev>
+              </noise>
+            </x>
+            <y>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>0.001</stddev>
+                <bias_mean>0.001</bias_mean>
+                <bias_stddev>0.0001</bias_stddev>
+              </noise>
+            </y>
+            <z>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>0.001</stddev>
+                <bias_mean>0.001</bias_mean>
+                <bias_stddev>0.0001</bias_stddev>
+              </noise>
+            </z>
+          </linear_acceleration>
+          <angular_velocity>
+            <x>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>0.001</stddev>
+                <bias_mean>0.001</bias_mean>
+                <bias_stddev>0.0001</bias_stddev>
+              </noise>
+            </x>
+            <y>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>0.001</stddev>
+                <bias_mean>0.001</bias_mean>
+                <bias_stddev>0.0001</bias_stddev>
+              </noise>
+            </y>
+            <z>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>0.001</stddev>
+                <bias_mean>0.001</bias_mean>
+                <bias_stddev>0.0001</bias_stddev>
+              </noise>
+            </z>
+          </angular_velocity>
+          <orientation_reference_frame>
+            <localization>ENU</localization>
+          </orientation_reference_frame>
+          <enable_orientation>true</enable_orientation>
+        </imu>
+      </sensor>  
+
+      <sensor name="dvl_sensor" type="custom" gz:type="dvl">
+        <!-- Account for DVL mounting position and base link rotation -->
+        <pose degrees="true">0.0 0 -8.6 0 0 0</pose>
+        <always_on>1</always_on>
+        <update_rate>50</update_rate>
+        <topic>/model/sst/dvl/velocity</topic>
+        <gz:dvl>
+          <type>phased_array</type>
+          <arrangement degrees="true">
+            <beam id="1">
+              <aperture>2.1</aperture>
+              <rotation>45</rotation>
+              <tilt>30</tilt>
+            </beam>
+            <beam>
+              <aperture>2.1</aperture>
+              <rotation>135</rotation>
+              <tilt>30</tilt>
+            </beam>
+            <beam>
+              <aperture>2.1</aperture>
+              <rotation>-45</rotation>
+              <tilt>30</tilt>
+            </beam>
+            <beam>
+              <aperture>2.1</aperture>
+              <rotation>-135</rotation>
+              <tilt>30</tilt>
+            </beam>
+          </arrangement>
+          <tracking>
+            <bottom_mode>
+              <when>best</when>
+              <noise type="gaussian">
+                <!-- +/- 0.4 cm/s precision at 10 m/s within 2 stddevs -->
+                <stddev>0.002</stddev>
+              </noise>
+              <visualize>false</visualize>
+            </bottom_mode>
+            <water_mass_mode>
+              <when>best</when>
+              <water_velocity>
+                <x>eastward_sea_water_velocity_meter_per_sec</x>
+                <y>northward_sea_water_velocity_meter_per_sec</y>
+              </water_velocity>
+              <boundaries>
+                <near>20.</near>
+                <far>60.</far>
+              </boundaries>
+              <bins>10</bins>
+              <noise type="gaussian">
+                <!-- +/- 0.7 cm/s precision at 10 m/s within 2 stddevs -->
+                <stddev>0.0035</stddev>
+              </noise>
+              <visualize>false</visualize>
+            </water_mass_mode>
+          </tracking>
+          <!-- Roughly 1 m resolution at a 100m -->
+          <resolution>0.01</resolution>
+          <!-- Approximate maximum range @ ~14.4v -->
+          <maximum_range>80.</maximum_range>
+          <minimum_range>0.1</minimum_range>
+        </gz:dvl>
+      </sensor>              
+    </link>
+
+    <!-- Hydrodynamics plugin -->
+    <plugin
+        filename="gz-sim-hydrodynamics-system"
+        name="gz::sim::systems::Hydrodynamics">
+      <link_name>base_link</link_name>
+      <water_density>1025.0</water_density>
+      <!-- Added mass: -->
+      <!--kDotP estimated to be 0.01% of mDotQ -->
+      <xDotU>-5.14e5</xDotU> 
+      <yDotV>-3.29e7</yDotV>
+      <zDotW>-3.29e7</zDotW>
+      <kDotP>-6.39e7</kDotP>        
+      <mDotQ>-6.39e10</mDotQ>
+      <nDotR>-6.39e10</nDotR>
+      <!-- First order stability derivative: -->
+      <xU>0</xU>
+      <yV>0</yV>
+      <zW>0</zW>
+      <kP>0</kP>
+      <mQ>0</mQ>
+      <nR>0</nR>
+      <!-- Second order stability derivative: -->
+      <!-- kPabsP estimated to be 1% of mQabsQ -->
+      <xUabsU>-1.64e4</xUabsU>
+      <yVabsV>-1.42e6</yVabsV>
+      <zWabsW>-1.42e6</zWabsW>
+      <kPabsP>-4.34e10</kPabsP>     
+      <mQabsQ>-4.34e12</mQabsQ>
+      <nRabsR>-4.34e12</nRabsR> 
+      <!-- Specify the fluid velocity topic -->
+      <namespace>sst</namespace>
+    </plugin>
+
+    <link name="propeller">
+      <pose>-92.0 0.0 0.0 -1.571 1.571 -1.571</pose>
+      <visual name="propeller_visual">
+        <pose>0 0 0 -1.571 0 0</pose>
+        <geometry>
+          <mesh>
+            <!-- The absolute file path is used so that it can be loaded by both GZ and RVIZ2 -->
+            <uri>file:///home/marsim_ws/src/marsim_gazebo/models/sst/meshes/t200_ccw_prop.dae</uri> 
+            <scale>92.0 92.0 92.0</scale> <!-- The diameter of the actual thruster is 76.2 mm; actual scaling = 91.864 -->
+          </mesh>
+        </geometry>
+      </visual>
+      <inertial>
+        <mass>1.0</mass>              <!-- The mass is already included in the mass of the sst body -->
+        <inertia>
+          <ixx>91906.0</ixx>          <!-- This is estimated -->
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>91906.0</iyy>          <!-- This is estimated -->
+          <iyz>0</iyz>
+          <izz>183750.0</izz>         <!-- This is estimated -->
+        </inertia>
+      </inertial>
+    </link>
+
+    <link name="thruster_fore">
+      <pose>60.0 0.0 -8.8 0 0 0</pose>
+      <visual name="thruster_fore_visual">
+        <pose>0 0 0 -1.571 0 0</pose>
+        <geometry>
+          <mesh>
+            <!-- The absolute file path is used so that it can be loaded by both GZ and RVIZ2 -->
+            <uri>file:///home/marsim_ws/src/marsim_gazebo/models/sst/meshes/t200_ccw_prop.dae</uri> 
+            <scale>27.0 27.0 27.0</scale> <!-- The diameter of the actual thruster is 76.2 mm; actual scaling = 26.247 -->
+          </mesh>
+        </geometry>
+      </visual>
+      <inertial>
+        <mass>1.0</mass>              <!-- The mass is already included in the mass of the sst body -->
+        <inertia>
+          <ixx>187.5</ixx>          <!-- This is estimated -->
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>187.5</iyy>          <!-- This is estimated -->
+          <iyz>0</iyz>
+          <izz>375.0</izz>         <!-- This is estimated -->
+        </inertia>
+      </inertial>
+    </link>
+
+    <link name="thruster_aft">
+      <pose>-60.0 0.0 -8.8 0 0 0</pose>
+      <visual name="thruster_aft_visual">
+        <pose>0 0 0 -1.571 0 0</pose>
+        <geometry>
+          <mesh>
+            <!-- The absolute file path is used so that it can be loaded by both GZ and RVIZ2 -->
+            <uri>file:///home/marsim_ws/src/marsim_gazebo/models/sst/meshes/t200_ccw_prop.dae</uri> 
+            <scale>27.0 27.0 27.0</scale> <!-- The diameter of the actual thruster is 76.2 mm; actual scaling = 26.247 -->
+          </mesh>
+        </geometry>
+      </visual>
+      <inertial>
+        <mass>1.0</mass>              <!-- The mass is already included in the mass of the sst body -->
+        <inertia>
+          <ixx>187.5</ixx>          <!-- This is estimated -->
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>187.5</iyy>          <!-- This is estimated -->
+          <iyz>0</iyz>
+          <izz>375.0</izz>         <!-- This is estimated -->
+        </inertia>
+      </inertial>
+    </link>
+
+    <joint name="propeller_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>propeller</child>
+      <axis>
+        <xyz>0 0 -1</xyz>
+      </axis>
+    </joint>
+
+    <joint name="thruster_fore_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>thruster_fore</child>
+      <axis>
+        <xyz>0 0 -1</xyz>
+      </axis>
+    </joint>
+
+    <joint name="thruster_aft_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>thruster_aft</child>
+      <axis>
+        <xyz>0 0 -1</xyz>
+      </axis>
+    </joint>
+
+    <plugin
+        filename="gz-sim-thruster-system"
+        name="gz::sim::systems::Thruster">
+      <namespace>sst</namespace>
+      <joint_name>propeller_joint</joint_name>
+      <use_angvel_cmd>false</use_angvel_cmd>
+      <fluid_density>1025.0</fluid_density>
+      <propeller_diameter>7.0</propeller_diameter>
+      <thrust_coefficient>0.17</thrust_coefficient>     
+      <velocity_control>false</velocity_control>
+      <p_gain>0.1</p_gain>
+      <i_gain>0.0</i_gain>
+      <d_gain>0.0</d_gain>
+      <max_thrust_cmd>164e3</max_thrust_cmd>
+      <min_thrust_cmd>-164e3</min_thrust_cmd>
+    </plugin>
+
+    <plugin
+        filename="gz-sim-thruster-system"
+        name="gz::sim::systems::Thruster">
+      <namespace>sst</namespace>
+      <joint_name>thurster_fore_joint</joint_name>
+      <use_angvel_cmd>false</use_angvel_cmd>
+      <fluid_density>1025.0</fluid_density>
+      <propeller_diameter>2.0</propeller_diameter>
+      <thrust_coefficient>0.17</thrust_coefficient>     
+      <velocity_control>false</velocity_control>
+      <p_gain>0.1</p_gain>
+      <i_gain>0.0</i_gain>
+      <d_gain>0.0</d_gain>
+      <max_thrust_cmd>164e3</max_thrust_cmd>
+      <min_thrust_cmd>-164e3</min_thrust_cmd>
+    </plugin>
+
+    <plugin
+        filename="gz-sim-thruster-system"
+        name="gz::sim::systems::Thruster">
+      <namespace>sst</namespace>
+      <joint_name>thurster_aft_joint</joint_name>
+      <use_angvel_cmd>false</use_angvel_cmd>
+      <fluid_density>1025.0</fluid_density>
+      <propeller_diameter>2.0</propeller_diameter>
+      <thrust_coefficient>0.17</thrust_coefficient>     
+      <velocity_control>false</velocity_control>
+      <p_gain>0.1</p_gain>
+      <i_gain>0.0</i_gain>
+      <d_gain>0.0</d_gain>
+      <max_thrust_cmd>164e3</max_thrust_cmd>
+      <min_thrust_cmd>-164e3</min_thrust_cmd>
+    </plugin>
+
+  </model>  
+</sdf>

@@ -1,0 +1,11 @@
+float64 target_yaw      # Requested absolute yaw position
+---
+float64 final_yaw       # Final Yaw position reached
+float64 error           # Final error in Yaw position
+---
+float64 current_yaw     # Current Yaw position
+float64 error           # Current error
+float64 thrust_t1       # Current T1 thrust command
+float64 thrust_t2       # Current T1 thrust command
+float64 thrust_t3       # Current T1 thrust command
+float64 thrust_t4       # Current T1 thrust command
