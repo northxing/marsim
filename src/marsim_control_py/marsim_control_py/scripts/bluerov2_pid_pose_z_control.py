@@ -17,10 +17,10 @@ Key features:
 This node is essential for maintaining the desired depth of the BlueROV2 in underwater operations.
 
 Usage:
-    ros2 run <package_name> bluerov2_pid_pose_z_control.py
+    ros2 run <package_name> bluerov2_pid_pose_z_control
 
 To run with custom parameters:
-    ros2 run <package_name> bluerov2_pid_pose_z_control.py --ros-args -p model_name:=my_rov -p Kp:=15.0 -p Ki:=0.02 -p Kd:=0.5 -p desired_z:=-30.0
+    ros2 run <package_name> bluerov2_pid_pose_z_control --ros-args -p model_name:=my_rov -p Kp:=15.0 -p Ki:=0.02 -p Kd:=0.5 -p desired_z:=-30.0
 
 Parameters:
     model_name (string, default: 'bluerov2'): Name of the ROV model, used in topic names.

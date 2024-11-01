@@ -1,0 +1,15 @@
+disp_z_control_action_server:
+  ros__parameters:
+    # PID gains
+    Kp: 10.0
+    Ki: 0.01
+    Kd: 0.0
+    
+    # ROV configuration
+    model_name: "bluerov2"
+    ekf_topic: "/bluerov2/odometry/filtered"
+    
+    # Control parameters
+    position_tolerance: 0.1  # meters
+    control_frequency: 10.0  # Hz
+

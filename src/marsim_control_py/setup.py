@@ -20,9 +20,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'bluerov2_pid_pose_xyyaw_reqcontrol = marsim_control_py.scripts.bluerov2_pid_pose_xyyaw_reqcontrol:main',
+            'bluerov2_pid_disp_xyyaw_control = marsim_control_py.scripts.bluerov2_pid_disp_xyyaw_control:main',
             'bluerov2_pid_pose_z_control = marsim_control_py.scripts.bluerov2_pid_pose_z_control:main',
-            'bluerov2_pid_pose_z_reqcontrol = marsim_control_py.scripts.bluerov2_pid_pose_z_reqcontrol:main',
+            'bluerov2_pid_disp_z = marsim_control_py.scripts.bluerov2_pid_disp_z_control:main',
             'bluerov2_stop_thrusters = marsim_control_py.scripts.bluerov2_stop_thrusters:main',
         ],
     },
